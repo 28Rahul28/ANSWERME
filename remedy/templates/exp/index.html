@@ -1,0 +1,35 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load static %}
+{% block content %}
+    <header class="masthead" style="background-image:url('{% static 'assets/img/home-bg.jpg' %}');">
+        <div class="overlay"></div>
+        <div class="container">
+            <div class="row">
+                <div class="col-md-10 col-lg-8 mx-auto">
+                    <div class="site-heading">
+                        <h1>Clean Blog</h1><span class="subheading">Find the truth</span></div>
+                </div>
+            </div>
+        </div>
+    </header>
+    <div class="container">
+        <div class="row">
+            <div class="col-md-10 col-lg-8">
+                {% if posts %}
+                    {% for post in posts %}
+                        <div class="post-preview">
+                            <a href="{% url 'blog:question-detail' slug=post.slug %}">
+                                <h2 class="post-title">{{ post.question }}</h2>
+                                <h3 class="post-subtitle">{{ post.count }} Answers</h3>
+                            </a>
+                            <span class="meta">Posted by&nbsp;<a href="#">{{ post.author }} on {{ post.date }}</a></p>
+                        </div>
+                        <hr>
+                    {% endfor %}
+                {% endif %}
+                <div class="clearfix"><a href={% url 'blog:question-create' %}><button class="btn btn-primary float-right" type="button">Ask a Question&nbsp;⇒</button></a></div>
+            </div>
+        </div>
+    </div>
+{% endblock content %}

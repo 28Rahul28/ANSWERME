@@ -1,0 +1,93 @@
+{% extends 'base.html' %}
+
+ {% block javascript %}
+    <script>
+    function like(x) {
+        var id = x.id;
+        var state = 0;
+        if (document.getElementById(id).className === "fa fa-heart")
+            {
+            state = -1
+            }
+            else
+            {
+                state = 1
+            }
+
+
+      $.ajax({
+        url: '/ajax/add_like/',
+        data: {
+          'id': id,
+          'state':state,
+        },
+        dataType: 'json',
+        success: function (data) {
+            document.getElementById(data['id']).innerHTML=" "+data['likes'];
+            if (document.getElementById(data['id']).className === "fa fa-heart")
+            {
+            document.getElementById(data['id']).className ="fa fa-heart-o"
+            }
+            else
+            {
+            document.getElementById(data['id']).className ="fa fa-heart"
+
+            }
+          }
+        });
+      }
+
+    </script>
+ {% endblock %}
+
+{% block content %}
+
+
+    <header class="masthead" style="background-image:url('assets/img/post-bg.jpg');">
+        <div class="overlay"></div>
+        <div class="container">
+            <div class="row">
+                <div class="col-md-10 col-lg-8 mx-auto">
+                    <div class="post-heading">
+                        <h1>{{ object.question }}</h1>
+                        <h2 class="subheading">{{ object.count }} Answers</h2><span class="meta">Asked by&nbsp;<a href="#">{{ object.author }}</a>&nbsp;on {{ object.date|date }}</span>
+                        <p>
+              {% for tag in object.tags.names %}
+                <span class="badge badge-primary">{{ tag }}</span>
+              {% endfor %}
+            </p>
+                        </div>
+                                        <div class="clearfix"><a href={% url 'blog:answer-create' slug=object.slug %}><button class="btn btn-primary float-right" type="button">Answer this Question&nbsp;⇒</button></a></div>
+
+                </div>
+            </div>
+        </div>
+    </header>
+    {% for answer in answers %}
+        <article>
+            <div class="container">
+
+                    <div class="row">
+                        <div class="col-md-10 col-lg-8 mx-auto">
+                                <p>{{ answer.answer }}</p>
+                                <div class="meta">Answered by&nbsp;<a href="#">{{ answer.author }}</a>&nbsp;on {{ answer.date|date }}</div>
+                                {% if request.user.is_authenticated %}
+                                    {% if request.user in answer.get_upvoters %}
+                                        <i onclick="like(this)" class="fa fa-heart" id="{{ answer.id }}" value="{{ answer.id }}" > {{ answer.likes }}</i>
+                                    {% else %}
+                                        <i onclick="like(this)" class="fa fa-heart-o" id="{{ answer.id }}" value="{{ answer.id }}" > {{ answer.likes }}</i>
+                                    {% endif %}
+                                {% else %}
+                                    <a href="{% url 'account_login' %}" ><i class="fa fa-heart-o"  > {{ answer.likes }}</i></a>
+
+                                {% endif %}
+
+                        </div>
+                    </div>
+
+            </div>
+        </article>
+        <hr>
+    {% endfor %}
+
+{% endblock content %}
