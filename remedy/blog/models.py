@@ -20,8 +20,8 @@ class Question(models.Model):
         self.slug = slugify(self.question)
         super().save(*args, **kwargs)
 
-    # def __str__(self):
-    #     pass
+    def __str__(self):
+        return self.question
 
     class Meta:
         db_table = ""
@@ -61,7 +61,6 @@ class Answer(models.Model):
 
     def save(self, *args, **kwargs):
         print(self.question.count)
-        self.question.count += 1
         self.question.save()
         super().save(*args, **kwargs)
 
@@ -73,8 +72,8 @@ class Answer(models.Model):
     def get_upvoters(self):
         return [vote.user for vote in self.votes.filter(value=True)]
 
-    # def __str__(self):
-    #     pass
+    def __str__(self):
+        return self.answer
 
     class Meta:
         db_table = ""

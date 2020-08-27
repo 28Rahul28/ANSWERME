@@ -2,8 +2,10 @@ from django.urls import path
 
 from .views import (
     AnswerCreateView,
+    AnswerDeleteView,
     AnswerUpdateView,
     QuestionCreateView,
+    QuestionDeleteView,
     QuestionDetailView,
     QuestionListView,
     QuestionUpdateView,
@@ -20,6 +22,11 @@ urlpatterns = [
         "posts/<slug:slug>/", view=QuestionDetailView.as_view(), name="question-detail"
     ),
     path(
+        "posts/<slug:slug>/delete/",
+        view=QuestionDeleteView.as_view(),
+        name="question-delete",
+    ),
+    path(
         "posts/<slug:slug>/edit",
         view=QuestionUpdateView.as_view(),
         name="question-edit",
@@ -30,7 +37,12 @@ urlpatterns = [
         name="answer-create",
     ),
     path(
-        "posts/<slug:slug>/answer/edit",
+        "posts/answers/<int:pk>/delete/",
+        view=AnswerDeleteView.as_view(),
+        name="answer-delete",
+    ),
+    path(
+        "posts/answers/<int:pk>/edit/",
         view=AnswerUpdateView.as_view(),
         name="answer-edit",
     ),

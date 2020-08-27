@@ -48,6 +48,7 @@
         <div class="container">
             <div class="row">
                 <div class="col-md-10 col-lg-8 mx-auto">
+
                     <div class="post-heading">
                         <h1>{{ object.question }}</h1>
                         <h2 class="subheading">{{ object.count }} Answers</h2><span class="meta">Asked by&nbsp;<a href="#">{{ object.author }}</a>&nbsp;on {{ object.date|date }}</span>
@@ -55,6 +56,10 @@
               {% for tag in object.tags.names %}
                 <span class="badge badge-primary">{{ tag }}</span>
               {% endfor %}
+              {% if request.user == object.author %}
+        <a href="{% url 'blog:question-edit' object.slug %}">Edit</a>
+        <a href="{% url 'blog:question-delete' object.slug %}">Delete</a>
+    {% endif %}
             </p>
                         </div>
                                         <div class="clearfix"><a href={% url 'blog:answer-create' slug=object.slug %}><button class="btn btn-primary float-right" type="button">Answer this Question&nbsp;⇒</button></a></div>
@@ -70,7 +75,14 @@
                     <div class="row">
                         <div class="col-md-10 col-lg-8 mx-auto">
                                 <p>{{ answer.answer }}</p>
-                                <div class="meta">Answered by&nbsp;<a href="#">{{ answer.author }}</a>&nbsp;on {{ answer.date|date }}</div>
+                                <div class="meta">Answered by&nbsp;<a href="#">{{ answer.author }}</a>&nbsp;on {{ answer.date|date }}
+
+                                {% if request.user == answer.author %}
+
+                                    <a href="{% url 'blog:answer-edit' answer.pk %}">Edit</a>
+                                    <a href="{% url 'blog:answer-delete' answer.pk %}">Delete</a>
+                                {% endif %}
+                                </div>
                                 {% if request.user.is_authenticated %}
                                     {% if request.user in answer.get_upvoters %}
                                         <i onclick="like(this)" class="fa fa-heart" id="{{ answer.id }}" value="{{ answer.id }}" > {{ answer.likes }}</i>

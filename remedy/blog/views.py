@@ -1,13 +1,19 @@
+from blog.forms import AnswerForm, QuestionForm
+from blog.models import Answer, Question
 from django.contrib.auth.decorators import login_required
 from django.core.exceptions import PermissionDenied
 from django.db.models import Q
 from django.http import JsonResponse
 from django.shortcuts import reverse
 from django.utils.decorators import method_decorator
-from django.views.generic import CreateView, DetailView, ListView, UpdateView, View
-
-from .forms import AnswerForm, QuestionForm
-from .models import Answer, Question
+from django.views.generic import (
+    CreateView,
+    DeleteView,
+    DetailView,
+    ListView,
+    UpdateView,
+    View,
+)
 
 
 # Create your views here.
@@ -50,6 +56,7 @@ class AnswerCreateView(CreateView):
         answer = form.save(commit=False)
         answer.author = self.request.user
         question = Question.objects.get(slug=self.request.path.split("/")[2])
+        question.count += 1
         answer.question = question
         return super(AnswerCreateView, self).form_valid(form)
 
@@ -131,20 +138,22 @@ def update_votes(obj, user, value):
     obj.count_votes()
 
 
-# class QuestionDeleteView(DeleteView):
-#     model = Question
-#     template_name = ".html"
+@method_decorator([login_required], name="dispatch")
+class QuestionDeleteView(AuthorRequiredMixin, DeleteView):
+    model = Question
+    template_name = "exp/confirm.html"
 
-#     def get_success_url(self):
-#         return reverse('blog:home')
+    def get_success_url(self):
+        return reverse("blog:home")
 
 
-# class AnswerDeleteView(DeleteView):
-#     model = Answer
-#     template_name = ".html"
+@method_decorator([login_required], name="dispatch")
+class AnswerDeleteView(AuthorRequiredMixin, DeleteView):
+    model = Answer
+    template_name = "exp/confirm.html"
 
-#     def get_success_url(self):
-#         return reverse('blog:home')
+    def get_success_url(self):
+        return reverse("blog:home")
 
 
 class SearchView(ListView):

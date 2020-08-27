@@ -1,6 +1,5 @@
+from blog.models import Answer, Question
 from django.forms import ModelForm
-
-from .models import Answer, Question
 
 
 class QuestionForm(ModelForm):
